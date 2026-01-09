@@ -3,6 +3,8 @@ package com.ecom.ecom.service;
 import com.ecom.ecom.entity.Product;
 import com.ecom.ecom.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +15,8 @@ public class ProductService {
 
     private final ProductRepository repository;
 
-    public List<Product> getAllProducts() {
-        return repository.findAll();
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     public Product getProductById(Long id) {

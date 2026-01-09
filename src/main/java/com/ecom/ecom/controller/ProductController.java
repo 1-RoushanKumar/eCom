@@ -4,11 +4,12 @@ import com.ecom.ecom.entity.Product;
 import com.ecom.ecom.repository.ProductRepository;
 import com.ecom.ecom.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -19,8 +20,12 @@ public class ProductController {
     private final ProductRepository repository;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(service.getAllProducts());
+    public ResponseEntity<Page<Product>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(service.getAllProducts(pageable));
     }
 
     @GetMapping("/{id}")
@@ -48,10 +53,14 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Product>> searchAllProducts(@RequestParam(required = false) String key) {
+    public ResponseEntity<Page<Product>> searchAllProducts(
+            @RequestParam(required = false) String key,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         if (key != null && !key.isEmpty()) {
-            return ResponseEntity.ok(repository.findByNameContainingIgnoreCase(key));
+            return ResponseEntity.ok(repository.findByNameContainingIgnoreCase(key, pageable));
         }
-        return ResponseEntity.ok(service.getAllProducts());
+        return ResponseEntity.ok(service.getAllProducts(pageable));
     }
 }
