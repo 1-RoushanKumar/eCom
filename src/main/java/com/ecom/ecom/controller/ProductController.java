@@ -1,6 +1,7 @@
 package com.ecom.ecom.controller;
 
 import com.ecom.ecom.entity.Product;
+import com.ecom.ecom.repository.ProductRepository;
 import com.ecom.ecom.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService service;
+    private final ProductRepository repository;
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
@@ -43,5 +45,13 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         service.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchAllProducts(@RequestParam(required = false) String key) {
+        if (key != null && !key.isEmpty()) {
+            return ResponseEntity.ok(repository.findByNameContainingIgnoreCase(key));
+        }
+        return ResponseEntity.ok(service.getAllProducts());
     }
 }
