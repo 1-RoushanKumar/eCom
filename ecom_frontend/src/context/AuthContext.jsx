@@ -10,8 +10,6 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
         if (token) {
-            // Optional: You could fetch user profile here if you had a /me endpoint
-            // For now, we assume if token exists, user is logged in
         }
     }, [token]);
 
@@ -19,12 +17,13 @@ export const AuthProvider = ({children}) => {
         try {
             const res = await api.post("/auth/authenticate", {email, password});
             const jwt = res.data.token;
+            const userRole = res.data.role; 
 
-            // ⚠️ In a real app, decode the JWT to get the role.
-            // For this assignment, we might cheat slightly or handle role separately.
-            // Let's assume you fetch role or decode it. For simplicity now:
             localStorage.setItem("token", jwt);
+            localStorage.setItem("role", userRole);
+
             setToken(jwt);
+            setRole(userRole);
             return true;
         } catch (error) {
             console.error("Login failed", error);
@@ -36,7 +35,12 @@ export const AuthProvider = ({children}) => {
         try {
             const res = await api.post("/auth/register", userData);
             const jwt = res.data.token;
+            const userRole = res.data.role;
+
             localStorage.setItem("token", jwt);
+            localStorage.setItem("role", userRole);
+
+            setRole(userRole);
             setToken(jwt);
             return true;
         } catch (error) {
