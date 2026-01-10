@@ -3,28 +3,29 @@ import api from "../api/axiosConfig";
 import { AuthContext } from "../context/AuthContext";
 import ProductCard from "../components/ProductCard";
 import { toast } from "react-toastify";
+import ProductModal from "../components/ProductModal";
 
 const Dashboard = () => {
-  const { logout } = useContext(AuthContext); // In case token expires
+  const { logout } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Search & Pagination State
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Check if user is Admin (simple check from local storage or context)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState(null); // Null = Add, Object = Edit
+
   const isAdmin = localStorage.getItem("role") === "ADMIN";
 
-  // 🟢 Fetch Products Function
   const fetchProducts = async (page = 0, search = "") => {
     try {
       setLoading(true);
       const response = await api.get(
         `/products?page=${page}&size=8&search=${search}`
       );
-      // Handle both Page<Product> and List<Product> just in case
+
       if (response.data.content) {
         setProducts(response.data.content);
         setTotalPages(response.data.totalPages);
@@ -70,9 +71,44 @@ const Dashboard = () => {
     }
   };
 
+  // 🟢 Open Modal for Adding
+  const handleAddNew = () => {
+    setCurrentProduct(null); // Ensure form is empty
+    setIsModalOpen(true);
+  };
+
+  // 🟢 Open Modal for Editing
   const handleEdit = (product) => {
-    // Placeholder: You can implement a modal or redirect to edit page here
-    toast.info(`Edit feature coming for: ${product.name}`);
+    setCurrentProduct(product); // Fill form with data
+    setIsModalOpen(true);
+  };
+
+  // 🟢 Save Logic (Create or Update)
+  const handleSaveProduct = async (productData) => {
+    try {
+      // 1. Convert strings to numbers for the Backend
+      const payload = {
+        ...productData,
+        price: parseFloat(productData.price),
+        stockQuantity: parseInt(productData.stockQuantity),
+      };
+
+      if (currentProduct) {
+        // UPDATE Existing
+        await api.put(`/products/${currentProduct.id}`, payload);
+        toast.success("Product updated successfully!");
+      } else {
+        // CREATE New
+        await api.post("/products", payload);
+        toast.success("Product added successfully!");
+      }
+
+      setIsModalOpen(false);
+      fetchProducts(currentPage, searchTerm); // Refresh list
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to save product.");
+    }
   };
 
   return (
@@ -93,7 +129,10 @@ const Dashboard = () => {
 
           {/* Add Button (Admin Only) */}
           {isAdmin && (
-            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 whitespace-nowrap">
+            <button
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 whitespace-nowrap"
+              onClick={handleAddNew}
+            >
               + Add Product
             </button>
           )}
@@ -150,6 +189,13 @@ const Dashboard = () => {
           )}
         </>
       )}
+      {/* 🟢 Render Modal */}
+      <ProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveProduct}
+        product={currentProduct}
+      />
     </div>
   );
 };
