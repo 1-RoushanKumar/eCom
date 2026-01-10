@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   return (
@@ -23,12 +24,11 @@ const App = () => {
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              {/* Placeholder for Dashboard */}
               <Route
                 path="/dashboard"
                 element={
                   <div className="text-center mt-10">
-                    Dashboard Coming Soon...
+                    <Dashboard />
                   </div>
                 }
               />
