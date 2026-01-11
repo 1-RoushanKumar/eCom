@@ -10,7 +10,6 @@ const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
   const navigate = useNavigate();
 
   const handleAddToCart = async () => {
-
     if (!isAuthenticated) {
       toast.info("Please log in to add items to your cart.");
       navigate("/login");
@@ -24,7 +23,6 @@ const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
 
     try {
       setAdding(true);
-      // Query params match the Backend Controller: ?productId=...&quantity=...
       await api.post(`/cart/add?productId=${product.id}&quantity=1`);
       toast.success(`Added ${product.name} to cart`);
     } catch (error) {
@@ -36,9 +34,9 @@ const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-white border border-gray-200 overflow-hidden hover:border-gray-300 transition-all duration-200">
       {/* Image Section */}
-      <div className="h-48 overflow-hidden bg-gray-200">
+      <div className="relative h-64 overflow-hidden bg-gray-50">
         <img
           src={
             product.imageUrl || "https://via.placeholder.com/300?text=No+Image"
@@ -47,41 +45,44 @@ const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
           className="w-full h-full object-cover"
         />
         {product.stockQuantity === 0 && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white font-bold">
-            OUT OF STOCK
+          <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center">
+            <span className="text-gray-700 font-medium text-sm tracking-wide">
+              OUT OF STOCK
+            </span>
           </div>
         )}
       </div>
 
       {/* Content Section */}
-      <div className="p-4">
-        <h3 className="text-lg font-bold text-gray-800 truncate">
+      <div className="p-5">
+        <h3 className="text-base font-semibold text-gray-900 mb-2">
           {product.name}
         </h3>
-        <p className="text-gray-600 text-sm mt-1 h-12 overflow-hidden">
+        <p className="text-gray-600 text-sm leading-relaxed h-10 overflow-hidden mb-4">
           {product.description}
         </p>
 
-        <div className="flex justify-between items-center mt-4">
-          <span className="text-indigo-600 font-bold text-xl">
-            ${product.price}
+        <div className="flex justify-between items-baseline mb-4">
+          <span className="text-gray-900 font-semibold text-lg">
+            ₹{product.price}
           </span>
-          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-            Stock: {product.stockQuantity}
+          <span className="text-xs text-gray-500">
+            {product.stockQuantity} in stock
           </span>
         </div>
-        <div className="mt-auto pt-4">
+
+        <div className="mt-auto">
           {isAdmin ? (
-            <div className="mt-4 flex gap-2 border-t pt-3">
+            <div className="flex gap-3 pt-4 border-t border-gray-100">
               <button
                 onClick={() => onEdit(product)}
-                className="flex-1 bg-yellow-500 text-white text-sm py-1 rounded hover:bg-yellow-600"
+                className="flex-1 bg-white border border-gray-300 text-gray-700 text-sm py-2 font-medium hover:bg-gray-50 transition-colors"
               >
                 Edit
               </button>
               <button
                 onClick={() => onDelete(product.id)}
-                className="flex-1 bg-red-500 text-white text-sm py-1 rounded hover:bg-red-600"
+                className="flex-1 bg-white border border-gray-300 text-red-600 text-sm py-2 font-medium hover:bg-red-50 transition-colors"
               >
                 Delete
               </button>
@@ -90,10 +91,10 @@ const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
             <button
               onClick={handleAddToCart}
               disabled={adding || product.stockQuantity === 0}
-              className={`w-full py-2 rounded text-white font-semibold transition-colors ${
+              className={`w-full py-2.5 text-sm font-medium transition-colors ${
                 product.stockQuantity === 0
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-indigo-600 hover:bg-indigo-700"
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-900 text-white hover:bg-gray-800"
               }`}
             >
               {adding ? "Adding..." : "Add to Cart"}
