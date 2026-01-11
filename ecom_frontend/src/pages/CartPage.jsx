@@ -14,7 +14,6 @@ const CartPage = () => {
       setCart(response.data);
     } catch (error) {
       console.error("Error fetching cart", error);
-      // Don't toast error here, cart might just be empty/new
     } finally {
       setLoading(false);
     }
@@ -28,7 +27,7 @@ const CartPage = () => {
     try {
       await api.delete(`/cart/${itemId}`);
       toast.success("Item removed");
-      fetchCart(); // Refresh cart
+      fetchCart();
     } catch (error) {
       toast.error("Failed to remove item");
     }
@@ -38,14 +37,13 @@ const CartPage = () => {
     try {
       await api.post("/orders/place");
       toast.success("Order placed successfully!");
-      setCart(null); // Clear local cart view
-      navigate("/orders"); // Redirect to Order History
+      setCart(null);
+      navigate("/orders");
     } catch (error) {
       toast.error("Failed to place order. Check stock availability.");
     }
   };
 
-  // Helper to calculate total
   const calculateTotal = () => {
     if (!cart || !cart.items) return 0;
     return cart.items.reduce(
@@ -54,76 +52,92 @@ const CartPage = () => {
     );
   };
 
-  if (loading) return <div className="text-center mt-10">Loading cart...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-500 text-sm">Loading cart...</p>
+      </div>
+    );
+  }
 
   if (!cart || !cart.items || cart.items.length === 0) {
     return (
-      <div className="text-center mt-20">
-        <h2 className="text-2xl font-bold text-gray-700">Your Cart is Empty</h2>
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="mt-4 text-indigo-600 hover:underline"
-        >
-          Go back to shopping
-        </button>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Your cart is empty
+          </h2>
+          <button
+            onClick={() => navigate("/")}
+            className="text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors"
+          >
+            Continue shopping
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">Shopping Cart</h1>
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-6 py-12 max-w-4xl">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-8 tracking-tight">
+          Shopping Cart
+        </h1>
 
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        {/* Cart Items List */}
-        <div className="divide-y divide-gray-200">
-          {cart.items.map((item) => (
-            <div
-              key={item.id}
-              className="p-6 flex flex-col sm:flex-row items-center justify-between gap-4"
-            >
-              <div className="flex items-center gap-4 flex-1">
-                <img
-                  src={
-                    item.product.imageUrl || "https://via.placeholder.com/100"
-                  }
-                  alt={item.product.name}
-                  className="w-20 h-20 object-cover rounded"
-                />
-                <div>
-                  <h3 className="font-bold text-lg">{item.product.name}</h3>
-                  <p className="text-gray-500">
-                    ${item.product.price} x {item.quantity}
-                  </p>
+        <div className="border border-gray-200">
+          {/* Cart Items List */}
+          <div className="divide-y divide-gray-200">
+            {cart.items.map((item) => (
+              <div
+                key={item.id}
+                className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+              >
+                <div className="flex items-start gap-4 flex-1">
+                  <img
+                    src={
+                      item.product.imageUrl || "https://via.placeholder.com/100"
+                    }
+                    alt={item.product.name}
+                    className="w-24 h-24 object-cover bg-gray-50"
+                  />
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-1">
+                      {item.product.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      ${item.product.price} × {item.quantity}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-8 w-full sm:w-auto justify-between sm:justify-end">
+                  <span className="font-semibold text-gray-900">
+                    ${(item.product.price * item.quantity).toFixed(2)}
+                  </span>
+                  <button
+                    onClick={() => handleRemoveItem(item.id)}
+                    className="text-gray-700 hover:text-gray-900 text-sm font-medium transition-colors"
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
-
-              <div className="flex items-center gap-6">
-                <span className="font-bold text-lg text-indigo-600">
-                  ${(item.product.price * item.quantity).toFixed(2)}
-                </span>
-                <button
-                  onClick={() => handleRemoveItem(item.id)}
-                  className="text-red-500 hover:text-red-700 font-medium"
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Footer / Checkout */}
-        <div className="bg-gray-50 p-6 flex flex-col sm:flex-row justify-between items-center border-t border-gray-200">
-          <div className="text-2xl font-bold text-gray-800 mb-4 sm:mb-0">
-            Total: ${calculateTotal().toFixed(2)}
+            ))}
           </div>
-          <button
-            onClick={handlePlaceOrder}
-            className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 font-bold shadow-lg transform active:scale-95 transition-all"
-          >
-            Place Order
-          </button>
+
+          {/* Footer / Checkout */}
+          <div className="bg-gray-50 p-6 flex flex-col sm:flex-row justify-between items-center border-t border-gray-200">
+            <div className="text-xl font-semibold text-gray-900 mb-4 sm:mb-0">
+              Total: ${calculateTotal().toFixed(2)}
+            </div>
+            <button
+              onClick={handlePlaceOrder}
+              className="bg-gray-900 text-white px-8 py-2.5 text-sm font-medium hover:bg-gray-800 transition-colors"
+            >
+              Place Order
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -12,43 +12,60 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-indigo-600 p-4 shadow-md">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-white text-xl font-bold">
-          Inventory App
-        </Link>
-        <div className="space-x-4">
-          {!token ? (
-            <>
-              <Link to="/login" className="text-white hover:text-indigo-200">
-                Login
-              </Link>
-              <Link to="/register" className="text-white hover:text-indigo-200">
-                Register
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/dashboard"
-                className="text-white hover:text-indigo-200"
-              >
-                Dashboard
-              </Link>
-              <Link to="/cart" className="mr-4 hover:text-indigo-200">
-                Cart
-              </Link>
-              <Link to="/orders" className="mr-4 hover:text-indigo-200">
-                My Orders
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-              >
-                Logout
-              </button>
-            </>
-          )}
+    <nav className="bg-white border-b border-gray-200">
+      <div className="container mx-auto px-6 py-4">
+        <div className="flex justify-between items-center">
+          <Link
+            to="/"
+            className="text-gray-900 text-3xl font-semibold tracking-tight"
+          >
+            E-Com
+          </Link>
+          <div className="flex items-center gap-8">
+            {!token ? (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors"
+                >
+                  Register
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/"
+                  className="text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors"
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/cart"
+                  className="text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors"
+                >
+                  Cart
+                </Link>
+                <Link
+                  to="/orders"
+                  className="text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors"
+                >
+                  My Orders
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium px-5 py-2 transition-colors"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </nav>

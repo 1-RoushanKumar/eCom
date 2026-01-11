@@ -28,14 +28,6 @@ const App = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <div className="text-center mt-10">
-                    <Dashboard />
-                  </div>
-                }
-              />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/orders" element={<OrderHistoryPage />} />
             </Routes>
