@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class Order {
     private User user;
 
     private LocalDateTime orderDate;
-    private Double totalAmount;
+    private BigDecimal totalAmount;
     private String status; // e.g., "PLACED", "SHIPPED"
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)

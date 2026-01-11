@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Entity
 @Builder
@@ -25,5 +27,5 @@ public class OrderItem {
     private Product product;
 
     private int quantity;
-    private double price; // Price at the moment of purchase
+    private BigDecimal price; // Price at the moment of purchase
 }
