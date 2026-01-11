@@ -9,6 +9,8 @@ const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const isOutOfStock = product.stockQuantity <= 0;
+
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
       toast.info("Please log in to add items to your cart.");
@@ -16,7 +18,8 @@ const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
       return;
     }
 
-    if (product.stockQuantity <= 0) {
+    // 2. Check Stock
+    if (isOutOfStock) {
       toast.warning("This product is out of stock.");
       return;
     }

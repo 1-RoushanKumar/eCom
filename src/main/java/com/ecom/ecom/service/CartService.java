@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CartService {
@@ -27,24 +29,32 @@ public class CartService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        // Check if stock is sufficient before adding to cart (optional, but good practice)
-        if (product.getStockQuantity() < quantity) {
-            throw new RuntimeException("Insufficient stock for product: " + product.getName());
-        }
-
         // Get or Create Cart
         Cart cart = cartRepository.findByUser(user).orElse(new Cart());
         if (cart.getUser() == null) {
             cart.setUser(user);
         }
 
-        // Check if item exists in cart, update quantity, else add new
-        var existingItem = cart.getItems().stream()
+        // Find if item already exists in cart
+        Optional<CartItem> existingItemOpt = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst();
 
-        if (existingItem.isPresent()) {
-            existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
+        // --- FIXED LOGIC STARTS HERE ---
+
+        // 1. Calculate how many are ALREADY in the cart
+        int currentQuantityInCart = existingItemOpt.map(CartItem::getQuantity).orElse(0);
+
+        // 2. Validate: (Existing + New) vs Stock
+        if (currentQuantityInCart + quantity > product.getStockQuantity()) {
+            throw new RuntimeException("Insufficient stock. You already have "
+                                       + currentQuantityInCart + " in your cart. Only "
+                                       + product.getStockQuantity() + " available.");
+        }
+        // --- FIXED LOGIC ENDS HERE ---
+
+        if (existingItemOpt.isPresent()) {
+            existingItemOpt.get().setQuantity(currentQuantityInCart + quantity);
         } else {
             CartItem newItem = CartItem.builder()
                     .product(product)
