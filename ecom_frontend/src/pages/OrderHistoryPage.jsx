@@ -5,11 +5,17 @@ const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await api.get("/orders");
-        setOrders(response.data);
+        const response = await api.get("/orders", {
+          params: { page, size: 5 },
+        });
+        setOrders(response.data.content);
+        setTotalPages(response.data.totalPages);
       } catch (error) {
         console.error("Error fetching orders", error);
       } finally {
@@ -17,7 +23,7 @@ const OrderHistoryPage = () => {
       }
     };
     fetchOrders();
-  }, []);
+  }, [page]);
 
   if (loading) {
     return (
@@ -83,6 +89,26 @@ const OrderHistoryPage = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-4 mt-10">
+            <button
+              disabled={page === 0}
+              onClick={() => setPage((p) => p - 1)}
+              className="px-4 py-2 border disabled:opacity-50"
+            >
+              Prev
+            </button>
+            <button
+              disabled={page === totalPages - 1}
+              onClick={() => setPage((p) => p + 1)}
+              className="px-4 py-2 border disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         )}
       </div>

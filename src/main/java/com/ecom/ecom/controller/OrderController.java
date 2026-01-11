@@ -3,6 +3,7 @@ package com.ecom.ecom.controller;
 import com.ecom.ecom.entity.Order;
 import com.ecom.ecom.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,13 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> getMyOrders(Principal principal) {
-        return ResponseEntity.ok(orderService.getUserOrders(principal.getName()));
+    public ResponseEntity<Page<Order>> getMyOrders(
+            Principal principal,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return ResponseEntity.ok(
+                orderService.getUserOrders(principal.getName(), page, size)
+        );
     }
 }

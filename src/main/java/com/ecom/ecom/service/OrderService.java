@@ -6,6 +6,10 @@ import com.ecom.ecom.repository.OrderRepository;
 import com.ecom.ecom.repository.ProductRepository;
 import com.ecom.ecom.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,8 +86,16 @@ public class OrderService {
         return savedOrder;
     }
 
-    public List<Order> getUserOrders(String userEmail) {
-        User user = userRepository.findByEmail(userEmail).orElseThrow();
-        return orderRepository.findByUser(user);
+    public Page<Order> getUserOrders(String userEmail, int page, int size) {
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "orderDate")
+        );
+        return orderRepository.findByUser(user, pageable);
     }
 }
