@@ -35,6 +35,12 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
+              <Link to="/cart" className="mr-4 hover:text-indigo-200">
+                Cart
+              </Link>
+              <Link to="/orders" className="mr-4 hover:text-indigo-200">
+                My Orders
+              </Link>
               <button
                 onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"

@@ -13,6 +13,8 @@ import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
+import CartPage from "./pages/CartPage";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
 
 const App = () => {
   return (
@@ -32,6 +34,8 @@ const App = () => {
                   </div>
                 }
               />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/orders" element={<OrderHistoryPage />} />
               <Route path="/" element={<Navigate to="/login" />} />
             </Routes>
           </div>

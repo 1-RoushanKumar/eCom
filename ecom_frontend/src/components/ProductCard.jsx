@@ -1,6 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import api from "../api/axiosConfig";
 
 const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
+  const [adding, setAdding] = useState(false);
+
+  const handleAddToCart = async () => {
+    if (product.stockQuantity <= 0) {
+      toast.warning("This product is out of stock.");
+      return;
+    }
+
+    try {
+      setAdding(true);
+      // Query params match the Backend Controller: ?productId=...&quantity=...
+      await api.post(`/cart/add?productId=${product.id}&quantity=1`);
+      toast.success(`Added ${product.name} to cart`);
+    } catch (error) {
+      toast.error("Failed to add to cart");
+      console.error(error);
+    } finally {
+      setAdding(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* Image Section */}
@@ -12,6 +35,11 @@ const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
           alt={product.name}
           className="w-full h-full object-cover"
         />
+        {product.stockQuantity === 0 && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white font-bold">
+            OUT OF STOCK
+          </div>
+        )}
       </div>
 
       {/* Content Section */}
@@ -31,22 +59,36 @@ const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
             Stock: {product.stockQuantity}
           </span>
         </div>
-        {isAdmin && (
-          <div className="mt-4 flex gap-2 border-t pt-3">
+        <div className="mt-auto pt-4">
+          {isAdmin ? (
+            <div className="mt-4 flex gap-2 border-t pt-3">
+              <button
+                onClick={() => onEdit(product)}
+                className="flex-1 bg-yellow-500 text-white text-sm py-1 rounded hover:bg-yellow-600"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => onDelete(product.id)}
+                className="flex-1 bg-red-500 text-white text-sm py-1 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          ) : (
             <button
-              onClick={() => onEdit(product)}
-              className="flex-1 bg-yellow-500 text-white text-sm py-1 rounded hover:bg-yellow-600"
+              onClick={handleAddToCart}
+              disabled={adding || product.stockQuantity === 0}
+              className={`w-full py-2 rounded text-white font-semibold transition-colors ${
+                product.stockQuantity === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700"
+              }`}
             >
-              Edit
+              {adding ? "Adding..." : "Add to Cart"}
             </button>
-            <button
-              onClick={() => onDelete(product.id)}
-              className="flex-1 bg-red-500 text-white text-sm py-1 rounded hover:bg-red-600"
-            >
-              Delete
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
