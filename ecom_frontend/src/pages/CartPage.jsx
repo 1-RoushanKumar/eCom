@@ -131,7 +131,7 @@ const CartPage = () => {
                         {item.product.name}
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        ${item.product.price} × {item.quantity}
+                        ₹{item.product.price} × {item.quantity}
                       </p>
 
                       {/* 4. Display Stock Warning Text */}
@@ -154,7 +154,7 @@ const CartPage = () => {
 
                   <div className="flex items-center gap-8 w-full sm:w-auto justify-between sm:justify-end">
                     <span className="font-semibold text-gray-900">
-                      ${(item.product.price * item.quantity).toFixed(2)}
+                      ₹{(item.product.price * item.quantity).toFixed(2)}
                     </span>
                     <button
                       onClick={() => handleRemoveItem(item.id)}
@@ -171,7 +171,7 @@ const CartPage = () => {
           {/* Footer / Checkout */}
           <div className="bg-gray-50 p-6 flex flex-col sm:flex-row justify-between items-center border-t border-gray-200">
             <div className="text-xl font-semibold text-gray-900 mb-4 sm:mb-0">
-              Total: ${calculateTotal().toFixed(2)}
+              Total: ₹{calculateTotal().toFixed(2)}
             </div>
 
             {/* 5. Disable Button if any stock issues exist */}

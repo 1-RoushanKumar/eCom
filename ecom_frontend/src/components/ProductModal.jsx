@@ -64,7 +64,7 @@ const ProductModal = ({ isOpen, onClose, onSave, product }) => {
           <div className="flex gap-4 mb-3">
             <div className="flex-1">
               <label className="block text-gray-700 text-sm font-bold mb-1">
-                Price ($)
+                Price
               </label>
               <input
                 type="number"
