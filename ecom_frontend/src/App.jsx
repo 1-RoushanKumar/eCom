@@ -12,7 +12,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import Dashboard from "./pages/Dashboard";
 import CartPage from "./pages/CartPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import LandingPage from "./pages/LandingPage";
