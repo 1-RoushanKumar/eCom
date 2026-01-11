@@ -118,7 +118,7 @@ Decouple the monolith into domain-specific services for independent scaling:
 * **Secrets Management:** HashiCorp Vault or AWS Secrets Manager for sensitive credentials
 * **JWT Token Rotation:** Refresh token mechanism for enhanced security
 
-For detailed scalability documentation, see [Scalability.md](./Scalability.md)
+For detailed scalability documentation, see [Scalability.md](./SCALABILITY.md)
 
 ---
 
