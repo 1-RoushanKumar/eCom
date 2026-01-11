@@ -15,6 +15,7 @@ import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import CartPage from "./pages/CartPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
+import LandingPage from "./pages/LandingPage";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
           <Navbar />
           <div className="container mx-auto p-4">
             <Routes>
+              <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route
@@ -36,7 +38,6 @@ const App = () => {
               />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/orders" element={<OrderHistoryPage />} />
-              <Route path="/" element={<Navigate to="/login" />} />
             </Routes>
           </div>
           <ToastContainer position="top-right" autoClose={3000} />

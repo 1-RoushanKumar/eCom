@@ -1,11 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import api from "../api/axiosConfig";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const ProductCard = ({ product, isAdmin, onDelete, onEdit }) => {
   const [adding, setAdding] = useState(false);
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleAddToCart = async () => {
+
+    if (!isAuthenticated) {
+      toast.info("Please log in to add items to your cart.");
+      navigate("/login");
+      return;
+    }
+
     if (product.stockQuantity <= 0) {
       toast.warning("This product is out of stock.");
       return;
